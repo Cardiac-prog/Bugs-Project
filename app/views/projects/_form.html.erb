@@ -1,0 +1,33 @@
+<%= form_with model: @project do |form| %>
+  <div>
+    <%= form.label :title %><br>
+    <%= form.text_field :title %>
+    <% @project.errors.full_messages_for(:title).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+  <div>
+    <%= form.label :description %><br>
+    <%= form.text_area :description %>
+    <% @project.errors.full_messages_for(:description).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+  <div>
+    <%= form.label :start_date %><br>
+    <%= form.date_field :start_date %>  <!-- Date input for start date -->
+    <%= @project.errors.full_messages_for(:start_date).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>
+  <div>
+    <%= form.label :end_date %><br>
+    <%= form.date_field :end_date %>    <!-- Date input for end date -->
+    <%= @project.errors.full_messages_for(:end_date).each do |message| %>
+      <div><%= message %></div>
+    <% end %>
+  </div>    
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
