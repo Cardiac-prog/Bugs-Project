@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_08_120520) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_08_123009) do
   create_table "bugs", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -48,7 +48,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_08_120520) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "bugs", "assigned_tos"
   add_foreign_key "bugs", "projects"
-  add_foreign_key "bugs", "reported_bies"
+  add_foreign_key "bugs", "users", column: "assigned_to_id"
+  add_foreign_key "bugs", "users", column: "reported_by_id"
 end

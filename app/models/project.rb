@@ -1,4 +1,5 @@
 class Project < ApplicationRecord
+  has_many :bugs
 
   def formatted_start_date
     start_date.strftime("%d-%m-%y") if start_date
@@ -8,10 +9,7 @@ class Project < ApplicationRecord
     end_date.strftime("%d-%m-%y") if end_date
   end
 
-  validates :title, presence: true
-  validates :description, presence: true  #, length: { minimum: 40 }
-  validates :start_date, presence: true
-  validates :end_date, presence: true
+  validates :title, :description, :start_date, :end_date, presence: true
 
   validate :end_date_after_start_date    # To ensure end date is after start date
 
