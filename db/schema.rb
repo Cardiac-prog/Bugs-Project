@@ -10,7 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_08_105333) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_08_120520) do
+  create_table "bugs", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.integer "category"
+    t.integer "priority"
+    t.integer "reported_by_id", null: false
+    t.integer "assigned_to_id", null: false
+    t.integer "project_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assigned_to_id"], name: "index_bugs_on_assigned_to_id"
+    t.index ["project_id"], name: "index_bugs_on_project_id"
+    t.index ["reported_by_id"], name: "index_bugs_on_reported_by_id"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -32,4 +47,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_08_105333) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "bugs", "assigned_tos"
+  add_foreign_key "bugs", "projects"
+  add_foreign_key "bugs", "reported_bies"
 end
