@@ -1,0 +1,35 @@
+<%= form_with model: [ @project, @bug ], local: true do |form| %>
+  <p>
+    <%= form.label :title %><br>
+    <%= form.text_field :title %>
+  </p>
+
+  <p>
+    <%= form.label :description %><br>
+    <%= form.text_area :description %>
+  </p>
+
+  <p>
+    <%= form.label :category %><br>
+    <%= form.collection_select :category, Bug.categories.keys, :to_s, :humanize %><br><br>
+  </p>
+
+  <p>
+    <%= form.label :priority %><br>
+    <%= form.collection_select :priority, Bug.priorities.keys, :to_s, :humanize %><br><br>
+  </p>
+
+  <p>
+    <%= form.label :assigned_to_id %>
+    <%= form.collection_select :assigned_to_id, User.all, :id, :email, prompt: "Select user to assign" %>
+  </p>
+
+  <p>
+    <%= form.hidden_field :reported_by_id, value: @bug.reported_by_id %>
+    <%= form.hidden_field :project_id, value: @bug.project_id %>
+  </p>
+
+  <p>
+    <%= form.submit "Update Bug" %>
+  </p>
+<% end %>

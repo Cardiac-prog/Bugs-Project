@@ -1,7 +1,7 @@
 class BugsController < ApplicationController
   def show
     find_project
-    @bug = @project.bugs.find(params[:id])
+    find_bug
   end
   def new
     find_project
@@ -22,10 +22,37 @@ class BugsController < ApplicationController
     end
   end
 
+  def edit
+    find_project
+    @bug = @project.bugs.find(params[:id])
+  end
+
+  def update
+    find_project
+    find_bug
+    if @bug.update(bug_params)
+      redirect_to project_bug_path(@project, @bug), notice: "Bug was successfully updated."
+    else
+      puts @bug.errors.full_messages
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    find_project
+    find_bug
+    @bug.destroy
+    redirect_to @project, notice: "Bug was successfully deleted."
+  end
+
   private
 
   def find_project
     @project = Project.find(params[:project_id])
+  end
+
+  def find_bug
+    @bug = @project.bugs.find(params[:id])
   end
 
   def bug_params

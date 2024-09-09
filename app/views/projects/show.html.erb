@@ -18,10 +18,18 @@
 <ul>
   <% @project.bugs.each do |bug| %>
     <li>
-      <%= link_to bug.title, project_bug_path(@project, bug) %> 
+      <%= link_to bug.title, project_bug_path(@project, bug) %>
+       &nbsp;&nbsp;                                                           <%#  for spacing between title and the buttons %>
+       &nbsp;&nbsp;
+       &nbsp;&nbsp;
+      <%= link_to 'Edit', edit_project_bug_path(@project, bug) %>&nbsp;
+      <%= link_to 'Delete', [bug.project, bug], data: { turbo_method: :delete ,turbo_confirm: 'Are you sure?' } %> 
     </li>
+    
+<%# <%= button_to 'Delete', project_bug_path(@project, bug), method: :delete, data: { confirm: 'Are you sure?' }<br><br>  %>
   <% end %>
 </ul>
+
 <%= link_to 'Report a new bug', new_project_bug_path(@project) %><br><br>
 
 <%= link_to "Back", root_path %>
