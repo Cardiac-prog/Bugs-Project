@@ -17,7 +17,7 @@ class ProjectsController < ApplicationController
     if @project.save
       redirect_to @project
     else
-      render :new, status: :unprocessable_entity  
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -31,7 +31,7 @@ class ProjectsController < ApplicationController
     if @project.update(project_params)
       redirect_to @project
     else
-      render :edit, status: :unprocessable_entity  
+      render :edit, status: :unprocessable_entity
     end
   end
 
@@ -41,7 +41,6 @@ class ProjectsController < ApplicationController
     redirect_to root_path, status: :see_other
   end
 
-  
   private
     def project_params
       params.require(:project).permit(:title, :description, :start_date, :end_date)

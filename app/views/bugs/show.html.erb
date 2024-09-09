@@ -1,0 +1,10 @@
+<p><strong>Title:</strong> <%= @bug.title %></p>
+<p><strong>Description:</strong> <%= @bug.description %></p>
+<p><strong>Category:</strong> <%= @bug.category.humanize %></p>
+<p><strong>Priority:</strong> <%= @bug.priority.humanize %></p>
+<p><strong>Reported by:</strong> <%= @bug.reported_by.email %></p>
+<p><strong>Assigned to:</strong> <%= @bug.assigned_to.email if @bug.assigned_to %></p>
+
+
+<%= link_to 'Back to project', project_path(@bug.project) %>
+

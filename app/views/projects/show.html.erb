@@ -8,7 +8,20 @@
 
 <div>
     <h4>Deadline: <span style="font-weight: normal;"><%= @project.formatted_end_date %></span></h4>
-</div>
+</div><br><br><br>
 
+
+
+
+<h2>Reported Bugs</h2>
+
+<ul>
+  <% @project.bugs.each do |bug| %>
+    <li>
+      <%= link_to bug.title, project_bug_path(@project, bug) %> 
+    </li>
+  <% end %>
+</ul>
+<%= link_to 'Report a new bug', new_project_bug_path(@project) %><br><br>
 
 <%= link_to "Back", root_path %>
