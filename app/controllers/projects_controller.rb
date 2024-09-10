@@ -9,7 +9,7 @@ class ProjectsController < ApplicationController
 
   def new
     @project = Project.new
-    # @qas = User.where(role: :qa)
+    @qas = User.where(role: :qa)
   end
 
   def create
@@ -19,14 +19,14 @@ class ProjectsController < ApplicationController
     if @project.save
       redirect_to @project
     else
-      #   @qas = User.where(role: :qa)
+      @qas = User.where(role: :qa)
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
     find_project
-    # @qas = User.where(role: :qa)
+    @qas = User.where(role: :qa)
   end
 
   def update
@@ -35,7 +35,7 @@ class ProjectsController < ApplicationController
     if @project.update(project_params)
       redirect_to @project
     else
-      #  @qas = User.where(role: :qa)
+      @qas = User.where(role: :qa)
       render :edit, status: :unprocessable_entity
     end
   end
