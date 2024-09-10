@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_10_062613) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_10_064314) do
   create_table "bugs", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -37,6 +37,14 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_10_062613) do
     t.index ["manager_id"], name: "index_projects_on_manager_id"
   end
 
+  create_table "projects_qas", id: false, force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "user_id", null: false
+    t.index ["project_id", "user_id"], name: "index_projects_qas_on_project_id_and_user_id", unique: true
+    t.index ["project_id"], name: "index_projects_qas_on_project_id"
+    t.index ["user_id"], name: "index_projects_qas_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -51,7 +59,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_10_062613) do
   end
 
   add_foreign_key "bugs", "projects"
-  add_foreign_key "bugs", "users", column: "assigned_to_id"            # assigned_to_id = developer_id
-  add_foreign_key "bugs", "users", column: "reported_by_id"           # reported_be_id = qa_id
+  add_foreign_key "bugs", "users", column: "assigned_to_id"
+  add_foreign_key "bugs", "users", column: "reported_by_id"
   add_foreign_key "projects", "users", column: "manager_id"
+  add_foreign_key "projects_qas", "projects"
+  add_foreign_key "projects_qas", "users"
 end
