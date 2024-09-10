@@ -1,5 +1,7 @@
 class Project < ApplicationRecord
-  has_many :bugs
+  has_many :bugs, dependent: :destroy              # A project has many bugs, when a project is deleted, all its associated bugs will also be removed
+  belongs_to :manager, class_name: "User"   # Because manager can create project (A project have a manager)
+  # has_and_belongs_to_many :qas, class_name: "User"    # A project has many QAs And  a QA can be assigned to many projects        # For many-to-many relationship by join table b/w Projects and QAs
 
   def formatted_start_date
     start_date.strftime("%d-%m-%y") if start_date
