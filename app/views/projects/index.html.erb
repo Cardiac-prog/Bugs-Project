@@ -14,7 +14,7 @@
   </style>
 </head>
 <body>
-  <h2><%= (current_user.role).upcase %> is Signed_in Now..</h2>
+  <h2>Hello @<%= (current_user.role).upcase %>...</h2>
   <% if can? :read, Project %>
     <h1>Projects</h1>
     <table>
@@ -42,8 +42,9 @@
         <%= link_to "New Project", new_project_path %>
       <% end %>
     <% end %>
-    
-      </table>
+    <div>
+      <%= pagy_nav(@pagy).html_safe %>
+   </div> 
   
 </body>
 </html>

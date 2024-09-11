@@ -13,7 +13,8 @@ class BugsController < ApplicationController
     @bug = @project.bugs.new(bug_params)
     @bug.reported_by = current_user
     @bug.assigned_to = User.find(params[:bug][:assigned_to_id]) if params[:bug][:assigned_to_id].present?
-    # @bug.qa = current_user  # Assign the current user as the QA
+    # it first check the params if there is an id given, then it uses that id and finds the user in database, if user is present than it assigns the user to assigned_to column
+    # 
 
 
     if @bug.save

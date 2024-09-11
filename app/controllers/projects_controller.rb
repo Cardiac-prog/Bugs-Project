@@ -4,18 +4,16 @@ class ProjectsController < ApplicationController
   # before_action :set_projects_and_bugs, only: [ :index, :show ]
   before_action :require_manager, only: [ :new, :create, :destroy ]
   def index
-  if current_user.manager?
-    @projects = Project.where(manager_id: current_user.id)
-    @bugs = [] # Ensure @bugs is initialized
-  elsif current_user.qa?
-    @projects = current_user.projects
-    @bugs = [] # Ensure @bugs is initialized
-  elsif current_user.developer?
-    @projects = Project.joins(:bugs).where(bugs: { assigned_to_id: current_user.id }).distinct
+    if current_user.manager?
+      @pagy, @projects = pagy(Project.where(manager_id: current_user.id))
+    elsif current_user.qa?
+      @pagy, @projects = pagy(current_user.projects)
+    elsif current_user.developer?
+      @pagy, @projects = pagy(Project.joins(:bugs).where(bugs: { assigned_to_id: current_user.id }).distinct)
       @bugs = Bug.where(assigned_to: current_user)
-  else
-    redirect_to root_path, alert: "Access denied."
-  end
+    else
+      redirect_to root_path, alert: "Access denied."
+    end
   end
 
   def show
