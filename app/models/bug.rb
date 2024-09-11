@@ -4,8 +4,8 @@ class Bug < ApplicationRecord
   belongs_to :assigned_to, class_name: "User"    # assigned_to is qa
   belongs_to :project
 
-  belongs_to :developer, class_name: "User", optional: true
-  belongs_to :qa, class_name: "User", optional: true
+  has_and_belongs_to_many :developer, class_name: "User"
+  # belongs_to :qa, class_name: "User"
 
   # Enums
   enum category: { ui: 0, backend: 1, performance: 2, security: 3, other: 4 }

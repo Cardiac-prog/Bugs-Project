@@ -1,41 +1,49 @@
-<style>
-  h1, table {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-collapse: collapse;
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    h1, table {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-collapse: collapse;
     }
     td, th {
-  border:1px solid black;
-
+      border: 1px solid black;
     }
-</style>
-
-<html>
-  <body>
-    <%# <% if user_signed_in? %> 
-      <h1>Projects</h1>
-      <table>
+  </style>
+</head>
+<body>
+  <h2><%= (current_user.role).upcase %> is Signed_in Now..</h2>
+  <% if can? :read, Project %>
+    <h1>Projects</h1>
+    <table>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Start Date</th>
+        <th>Deadline</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+      <% @projects.each do |project| %>
         <tr>
-          <th>Title</th>
-          <th>Description</th>
-          <th>Start Date</th>
-          <th>Deadline</th>
-          <th>Edit</th>
-          <th>Delete</th>
+          <td><%= link_to project.title, project %></td>
+          <td><%= project.description %></td>
+          <td><%= project.formatted_start_date %></td>
+          <td><%= project.formatted_end_date %></td>
+          <td><%= link_to "Edit", edit_project_path(project) %></td>
+          <td><%= link_to "Delete", project_path(project), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %></td>
         </tr>
-        <% @projects.each do |project| %>
-          <tr>
-            <td><%= link_to project.title, project %></td>
-            <td><%= project.description %></td>
-            <td><%= project.formatted_start_date %></td>
-            <td><%= project.formatted_end_date %></td>
-            <td><%= link_to "Edit", edit_project_path(project) %></td>
-            <td><%= link_to "Delete", project_path(project), data: {turbo_method: :delete, turbo_confirm: "Are you sure?"} %></td>
-          </tr>
-        <% end %>
+      <% end %>
+    </table>
+    
+      <% if can? :create, Project %>
+        <%= link_to "New Project", new_project_path %>
+      <% end %>
+    <% end %>
+    
       </table>
-      <%= link_to "New Project", new_project_path %>
-    <%# <% end %> 
-  </body>
+  
+</body>
 </html>

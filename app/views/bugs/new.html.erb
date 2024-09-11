@@ -1,3 +1,13 @@
+<% if @bug.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@bug.errors.count, "error") %> prohibited this bug from being saved:</h2>
+    <ul>
+      <% @bug.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
 <h1>Report a Bug</h1>
 
 <%= render "form", bug: @bug %>

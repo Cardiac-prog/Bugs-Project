@@ -1,10 +1,25 @@
 class ProjectsController < ApplicationController
+  load_and_authorize_resource
+  #  before_action :find_project, only: [ :show, :edit, :update, :destroy ]
+  # before_action :set_projects_and_bugs, only: [ :index, :show ]
+  before_action :require_manager, only: [ :new, :create, :destroy ]
   def index
-    @projects = Project.where(manager: current_user)      # Only show projects created by the current manager
+  if current_user.manager?
+    @projects = Project.where(manager_id: current_user.id)
+    @bugs = [] # Ensure @bugs is initialized
+  elsif current_user.qa?
+    @projects = current_user.projects
+    @bugs = [] # Ensure @bugs is initialized
+  elsif current_user.developer?
+    @projects = Project.joins(:bugs).where(bugs: { assigned_to_id: current_user.id }).distinct
+      @bugs = Bug.where(assigned_to: current_user)
+  else
+    redirect_to root_path, alert: "Access denied."
+  end
   end
 
   def show
-    find_project
+    @project
   end
 
   def new
@@ -25,13 +40,10 @@ class ProjectsController < ApplicationController
   end
 
   def edit
-    find_project
     @qas = User.where(role: :qa)
   end
 
   def update
-    find_project
-
     if @project.update(project_params)
       redirect_to @project
     else
@@ -41,7 +53,6 @@ class ProjectsController < ApplicationController
   end
 
   def destroy
-    find_project
     @project.destroy
     redirect_to root_path, status: :see_other
   end
@@ -51,7 +62,20 @@ class ProjectsController < ApplicationController
       params.require(:project).permit(:title, :description, :start_date, :end_date, qa_ids: [])
     end
 
-    def find_project
-      @project = Project.find(params[:id])
+=begin    def set_projects_and_bugs
+    if current_user.developer?
+      @projects = Project.joins(:bugs).where(bugs: { assigned_to_id: current_user.id }).distinct
+      @bugs = Bug.where(assigned_to: current_user)
+    else
+      @projects = Project.all
+      @bugs = Bug.all
+    end
+    end
+=end
+    def require_manager
+      unless current_user.manager?
+        flash[:alert] = "Only managers have these rights."
+        redirect_to root_path
+      end
     end
 end

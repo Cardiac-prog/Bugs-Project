@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_10_064314) do
+ActiveRecord::Schema[7.2].define(version: 2024_09_10_215254) do
   create_table "bugs", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -26,6 +26,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_10_064314) do
     t.index ["reported_by_id"], name: "index_bugs_on_reported_by_id"
   end
 
+  create_table "bugs_users", id: false, force: :cascade do |t|
+    t.integer "bug_id", null: false
+    t.integer "user_id", null: false   # developer_id
+    t.index ["bug_id", "user_id"], name: "index_bugs_users_on_bug_id_and_user_id", unique: true
+    t.index ["user_id", "bug_id"], name: "index_bugs_users_on_user_id_and_bug_id"
+  end
+
   create_table "projects", force: :cascade do |t|
     t.string "title"
     t.text "description"
@@ -39,7 +46,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_10_064314) do
 
   create_table "projects_qas", id: false, force: :cascade do |t|
     t.integer "project_id", null: false
-    t.integer "user_id", null: false
+    t.integer "user_id", null: false      # qa_id
     t.index ["project_id", "user_id"], name: "index_projects_qas_on_project_id_and_user_id", unique: true
     t.index ["project_id"], name: "index_projects_qas_on_project_id"
     t.index ["user_id"], name: "index_projects_qas_on_user_id"
