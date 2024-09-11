@@ -10,16 +10,11 @@ class Ability
       can :manage, Project  # A manager can manage all aspects of a project
     elsif user.qa?
       can :manage, Bug  # A QA can manage bugs
-      can [ :read, :show ], Project do |project|
-        project.qas.include?(user)  # A QA can read and update projects assigned to them
-      end
+      can [ :read, :show ], Project, qas: { id: user.id }    # can see only associated projects
+
     elsif user.developer?
-      can :read, Project do |project|
-        project.bugs.where(assigned_to: user).exists?  # Only allow reading projects with bugs assigned to the developer
-      end
-      can [ :read, :show, :update ], Bug do |bug|
-        bug.assigned_to == user  # A developer can only read and update bugs assigned to them
-      end
+      can :read, Project, bugs: { assigned_to: user }         # can read only those projects that have bugs assigned to the developer
+      can [ :read, :show, :update ], Bug, assigned_to: user
     end
   end
 end
