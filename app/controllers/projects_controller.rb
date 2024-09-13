@@ -1,11 +1,10 @@
 class ProjectsController < ApplicationController
   load_and_authorize_resource
-  #  before_action :find_project, only: [ :show, :edit, :update, :destroy ]
-  # before_action :set_projects_and_bugs, only: [ :index, :show ]
-  before_action :require_manager, only: [ :new, :create, :destroy ]
+  # before_action :require_manager, only: [ :new, :create, :destroy ]
   def index
     if current_user.manager?
-      @pagy, @projects = pagy(Project.where(manager_id: current_user.id))
+      @pagy, @projects = pagy(current_user.managed_projects)
+
     elsif current_user.qa?
       @pagy, @projects = pagy(current_user.projects)
     elsif current_user.developer?
@@ -22,7 +21,7 @@ class ProjectsController < ApplicationController
 
   def new
     @project = Project.new
-    @qas = User.where(role: :qa)
+    @qas = User.where(role: :qa)           # all the QAs will be included in the dropdown menu while creating project
   end
 
   def create
@@ -58,22 +57,5 @@ class ProjectsController < ApplicationController
   private
     def project_params
       params.require(:project).permit(:title, :description, :start_date, :end_date, qa_ids: [])
-    end
-
-=begin    def set_projects_and_bugs
-    if current_user.developer?
-      @projects = Project.joins(:bugs).where(bugs: { assigned_to_id: current_user.id }).distinct
-      @bugs = Bug.where(assigned_to: current_user)
-    else
-      @projects = Project.all
-      @bugs = Bug.all
-    end
-    end
-=end
-    def require_manager
-      unless current_user.manager?
-        flash[:alert] = "Only managers have these rights."
-        redirect_to root_path
-      end
     end
 end

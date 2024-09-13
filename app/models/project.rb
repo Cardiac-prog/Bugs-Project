@@ -3,6 +3,8 @@ class Project < ApplicationRecord
   belongs_to :manager, class_name: "User"   # Because manager can create project (A project have a manager)
   has_and_belongs_to_many :qas, class_name: "User", join_table: "projects_qas"    # A project has many QAs And  a QA can be assigned to many projects        # For many-to-many relationship by join table b/w Projects and QAs
   # specifying join table name as "projects_qas" bcz the two joined tabled are Project and User and rails default behaviour is like it will find table named "projects_users"
+
+  # formatting date
   def formatted_start_date
     start_date.strftime("%d-%m-%y") if start_date
   end
@@ -11,7 +13,7 @@ class Project < ApplicationRecord
     end_date.strftime("%d-%m-%y") if end_date
   end
 
-  validates :title, :description, :start_date, :end_date, presence: true
+  validates :title, :description, :start_date, :end_date, presence: true         # validates while creating & updating project
 
   validate :end_date_after_start_date    # To ensure end date is after start date
 
