@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      td, th {
+        border: 1px solid black;
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      .table-container {
+        margin: 20px auto;
+        padding: 20px;
+        border: 2px solid #333;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 800px;
+      }
+
+      /* Style for Pagy navigation */
+      .pagy-nav {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        padding: 0;
+      }
+
+      .pagy-nav a {
+        display: inline-block;
+        padding: 8px 12px;
+        margin: 0 4px;
+        border: 1px solid #333;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #333;
+        background-color: #f2f2f2;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+      }
+
+      .pagy-nav a.active {
+        background-color: #333;
+        color: #fff;
+      }
+
+      .pagy-nav a:hover {
+        background-color: #ddd;
+      }
+
+      .pagy-nav span {
+        display: inline-block;
+        padding: 8px 12px;
+        margin: 0 4px;
+        border: 1px solid #333;
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        font-size: 14px;
+        font-family: Arial, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="table-container">
+      <% if can?(:manage, Bug) && can?(:read, Project) %>
+        <h2>Reported Bugs</h2>
+      <% else %>
+        <h2>Assigned Bugs</h2>
+      <% end %>
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Priority</th>
+            <th>Reported By</th>
+            <th>Assigned To</th>
+            <th>Edit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% bugs.each do |bug| %>
+            <tr>
+              <td><%= link_to bug.title, project_bug_path(bug.project, bug) %></td>
+              <td><%= bug.description %></td>
+              <td><%= bug.category.humanize %></td>
+              <td><%= bug.priority.humanize %></td>
+              <td><%= bug.reported_by.email %></td>
+              <td><%= bug.assigned_to.email if bug.assigned_to %></td>
+              <td><%= link_to 'Edit', edit_project_bug_path(bug.project, bug) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="pagy-nav">
+        <%= pagy_nav(@pagy).html_safe %>
+      </div>
+    </div>
+  </body>
+</html>

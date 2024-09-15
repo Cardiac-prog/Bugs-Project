@@ -1,10 +1,74 @@
-<p><strong>Title:</strong> <%= @bug.title %></p>
-<p><strong>Description:</strong> <%= @bug.description %></p>
-<p><strong>Category:</strong> <%= @bug.category.humanize %></p>
-<p><strong>Priority:</strong> <%= @bug.priority.humanize %></p>
-<p><strong>Reported by:</strong> <%= @bug.reported_by.email %></p>
-<p><strong>Assigned to:</strong> <%= @bug.assigned_to.email if @bug.assigned_to %></p>
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #f2f2f2;
+      }
 
+      .content-container {
+        margin: 20px auto;
+        padding: 20px;
+        border: 2px solid #333;
+        background-color: #fff;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 800px;
+      }
 
-<%= link_to 'Back to project', project_path(@bug.project) %>
+      h2 {
+        margin-top: 0;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+        font-size: 1.5em;
+      }
 
+      p {
+        margin: 10px 0;
+        font-size: 1em;
+      }
+
+      strong {
+        font-weight: bold;
+      }
+
+      .link-button {
+        display: inline-block;
+        margin: 10px 0;
+        padding: 10px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #fff;
+        background-color: #007BFF;
+        font-size: 1em;
+        text-align: center;
+      }
+
+      .link-button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content-container">
+      <h2>Bug Details</h2>
+
+      <p><strong>Title:</strong> <%= @bug.title %></p>
+      <p><strong>Description:</strong> <%= @bug.description %></p>
+      <p><strong>Category:</strong> <%= @bug.category.humanize %></p>
+      <p><strong>Priority:</strong> <%= @bug.priority.humanize %></p>
+      <p><strong>Reported by:</strong> <%= @bug.reported_by.email %></p>
+      <p><strong>Assigned to:</strong> <%= @bug.assigned_to.email if @bug.assigned_to %></p>
+
+      <% if can?(:manage, Project) || can?(:manage, Bug) %>
+        <%= link_to 'Back to project', project_path(@bug.project), class: 'link-button' %>
+      <% else %>
+        <%= link_to 'Back to Bugs', bugs_path, class: 'link-button' %>
+      <% end %>
+    </div>
+  </body>
+</html>

@@ -1,50 +1,156 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <style>
-    h1, table {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-collapse: collapse;
-    }
-    td, th {
-      border: 1px solid black;
-    }
-  </style>
-</head>
-<body>
-  <h2>Hello @<%= (current_user.role).upcase %>...</h2>
-  <% if can? :read, Project %>
-    <h1>Projects</h1>
-    <table>
-      <tr>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Start Date</th>
-        <th>Deadline</th>
-        <th>Edit</th>
-        <th>Delete</th>
-      </tr>
-      <% @projects.each do |project| %>
-        <tr>
-          <td><%= link_to project.title, project %></td>
-          <td><%= project.description %></td>
-          <td><%= project.formatted_start_date %></td>
-          <td><%= project.formatted_end_date %></td>
-          <td><%= link_to "Edit", edit_project_path(project) %></td>
-          <td><%= link_to "Delete", project_path(project), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %></td>
-        </tr>
-      <% end %>
-    </table>
-    
-      <% if can? :create, Project %>
-        <%= link_to "New Project", new_project_path %>
-      <% end %>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      h1 {
+        text-align: center;
+      }
+
+      .table-container {
+        padding: 20px;
+        margin: 20px auto;
+        border: 2px solid #333;
+        width: 90%;
+        max-width: 1000px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      td, th {
+        border: 1px solid black;
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      li {
+        padding: 2px 0;
+      }
+
+      /* Style for Pagy navigation */
+      .pagy-nav {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        padding: 0;
+      }
+
+      .pagy-nav a {
+        display: inline-block;
+        padding: 8px 12px;
+        margin: 0 4px;
+        border: 1px solid #333;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #333;
+        background-color: #f2f2f2;
+        font-size: 14px;
+      }
+
+      .pagy-nav a.active {
+        background-color: #333;
+        color: #fff;
+      }
+
+      .pagy-nav a:hover {
+        background-color: #ddd;
+      }
+
+      .pagy-nav span {
+        display: inline-block;
+        padding: 8px 12px;
+        margin: 0 4px;
+        border: 1px solid #333;
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        font-size: 14px;
+      }
+
+      /* Center the New Project link */
+      .new-project-link {
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      .new-project-link a {
+        display: inline-block;
+        padding: 10px 20px;
+        border: 1px solid #333;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #333;
+        background-color: #f2f2f2;
+        font-size: 16px;
+      }
+
+      .new-project-link a:hover {
+        background-color: #ddd;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Hello <%= current_user.email %>...</h2>
+    <% if can? :read, Project %>
+      <div class="table-container">
+        <h1>Projects</h1>
+        <table>
+          <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Start Date</th>
+            <th>Deadline</th>
+            <th>Manager Email</th>
+            <th>Assigned QA's</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+          <% @projects.each do |project| %>
+            <tr>
+              <td><%= link_to project.title, project %></td>
+              <td><%= project.description %></td>
+              <td><%= project.formatted_start_date %></td>
+              <td><%= project.formatted_end_date %></td>
+              <td><%= project.manager.email %></td>
+              <td>
+                <ul>
+                  <% project.qas.each do |qa| %>
+                    <li><%= qa.email %></li>
+                  <% end %>
+                </ul>
+              </td>
+              <td><%= link_to "Edit", edit_project_path(project) %></td>
+              <td><%= link_to "Delete", project_path(project), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } %></td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
+      <br>
+      <div class="pagy-nav">
+        <%= pagy_nav(@pagy).html_safe %>
+      </div>
+      <div class="new-project-link">
+        <% if can? :create, Project %>
+          <%= link_to "New Project", new_project_path %>
+        <% end %>
+      </div>
     <% end %>
-    <div>
-      <%= pagy_nav(@pagy).html_safe %>
-   </div> 
-  
-</body>
+  </body>
 </html>

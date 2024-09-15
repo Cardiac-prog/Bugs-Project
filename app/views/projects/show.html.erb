@@ -1,34 +1,130 @@
-<h1><%= @project.title %></h1>
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
 
-<p><%= @project.description %></p>
+      .project-details, .bugs-list {
+        margin: 20px auto;
+        padding: 20px;
+        border: 2px solid #333;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 800px;
+      }
 
-<div>
-    <h4>Starting Date: <span style="font-weight: normal;"><%= @project.formatted_start_date %></span></h4>
-</div>
+      h3, h2 {
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+      }
 
-<div>
-    <h4>Deadline: <span style="font-weight: normal;"><%= @project.formatted_end_date %></span></h4>
-</div><br><br><br>
+      h4 {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
 
+      h4 span {
+        font-weight: normal;
+      }
 
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
 
+      ul li {
+        padding: 8px 0;
+      }
 
-<h2>Reported Bugs</h2>
+      ul li a {
+        text-decoration: none;
+        color: #007BFF;
+      }
 
-<ul>
-  <% @project.bugs.each do |bug| %>
-    <li>
-      <%= link_to bug.title, project_bug_path(@project, bug) %>
-       &nbsp;&nbsp;                                                           <%#  for spacing between title and the buttons %>
-       &nbsp;&nbsp;
-       &nbsp;&nbsp;
-      <%= link_to 'Edit', edit_project_bug_path(@project, bug) %>&nbsp;
-      <%= link_to 'Delete', [bug.project, bug], data: { turbo_method: :delete ,turbo_confirm: 'Are you sure?' } %> 
-    </li>
-  <% end %>
-</ul>
-<br><br>
+      ul li a:hover {
+        text-decoration: underline;
+      }
 
-<%= link_to 'Report a new bug', new_project_bug_path(@project) %><br><br>
+      .buttons {
+        margin-left: 20px;
+      }
 
-<%= link_to "Back", root_path %>
+      .buttons a {
+        margin-right: 10px;
+        color: #ff5722;
+      }
+
+      .buttons a:hover {
+        text-decoration: underline;
+      }
+
+      .action-links {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .action-links a {
+        display: inline-block;
+        margin: 10px;
+        padding: 10px 20px;
+        background-color: #007BFF;
+        color: #fff;
+        border-radius: 5px;
+        text-decoration: none;
+      }
+
+      .action-links a:hover {
+        background-color: #0056b3;
+      }
+
+      .back-link {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      .back-link a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #6c757d;
+        color: #fff;
+        border-radius: 5px;
+        text-decoration: none;
+      }
+
+      .back-link a:hover {
+        background-color: #5a6268;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="project-details">
+      <h4>Title: <span><%= @project.title %></span></h4>
+      <h4>Description: <span><%= @project.description %></span></h4>
+      <h4>Starting Date: <span><%= @project.formatted_start_date %></span></h4>
+      <h4>Deadline: <span><%= @project.formatted_end_date %></span></h4>
+      <h4>Manager email: <span><%= @project.manager.email %></span></h4>
+      <h3>Assigned QA's</h3>
+      <ul>
+        <% @qas.each do |qa| %>
+          <li><%= qa.email %></li>
+        <% end %>
+      </ul>
+    </div>
+    <% if can?(:manage, Bug) && can?(:read, Project) && can?(:show, Project) %>
+      <div class="bugs-list">
+        <%= render 'bugs/bugs_list', bugs: @bugs %>
+      </div>
+      <div class="action-links">
+        <%= link_to 'Report a new bug', new_project_bug_path(@project) %>
+      </div>
+    <% end %>
+    <div class="back-link">
+      <%= link_to 'Back', root_path %>
+    </div>
+  </body>
+</html>

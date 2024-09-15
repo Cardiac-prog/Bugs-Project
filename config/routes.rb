@@ -5,4 +5,6 @@ Rails.application.routes.draw do
   resources :projects do
     resources :bugs
   end
+
+  resources :bugs, only: [ :index ]
 end

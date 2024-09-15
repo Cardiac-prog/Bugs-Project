@@ -1,22 +1,20 @@
 class ProjectsController < ApplicationController
   load_and_authorize_resource
-  # before_action :require_manager, only: [ :new, :create, :destroy ]
-  def index
-    if current_user.manager?
-      @pagy, @projects = pagy(current_user.managed_projects)
 
-    elsif current_user.qa?
-      @pagy, @projects = pagy(current_user.projects)
-    elsif current_user.developer?
-      @pagy, @projects = pagy(Project.joins(:bugs).where(bugs: { assigned_to_id: current_user.id }).distinct)
-      @bugs = Bug.where(assigned_to: current_user)
-    else
-      redirect_to root_path, alert: "Access denied."
+  def index
+    if can?(:manage, Project)
+      @pagy, @projects = pagy(current_user.managed_projects)
+    elsif can?(:manage, Bug) && can?(:read, Project)
+      redirect_to bugs_path
+    elsif can?(:read, Bug) && can?(:update, Bug)
+      redirect_to bugs_path
     end
   end
 
   def show
-    @project
+    @project = Project.find(params[:id])
+    @qas = @project.qas
+    @pagy, @bugs = pagy(@project.bugs.where(reported_by: current_user))
   end
 
   def new

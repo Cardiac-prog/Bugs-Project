@@ -9,7 +9,8 @@ class User < ApplicationRecord
   validates :role, presence: true, inclusion: { in: roles.keys }
 
   has_many :reported_bugs, class_name: "Bug", foreign_key: "reported_by_id"     # qa_id
-  has_and_belongs_to_many :assigned_bugs, class_name: "Bug", foreign_key: "assigned_to_id", dependent: :destroy    # many-to-many --- developer & bug   join table -- bugs_users
+  has_and_belongs_to_many :assigned_bugs, class_name: "Bug", join_table: "bugs_users"   # , foreign_key: "user_id", association_foreign_key: "bug_id", dependent: :destroy
+
 
   has_many :managed_projects, class_name: "Project", foreign_key: "manager_id", dependent: :destroy      # A manager can have multiple projects
   has_and_belongs_to_many :projects, join_table: "projects_qas"               # For many-to-many relationship by join table b/w Projects and QAs
@@ -18,4 +19,4 @@ end                                                                  # specifyin
 
 
 # Availabitlity of many to many
-# 
+#

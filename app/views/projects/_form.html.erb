@@ -1,48 +1,139 @@
-<%= form_with model: @project do |form| %>
-  <% if @project.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
-      <ul>
-        <% @project.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: #f2f2f2;
+      }
 
-  <div>
-    <%= form.label :title %><br>
-    <%= form.text_field :title %>
-    <% @project.errors.full_messages_for(:title).each do |message| %>
-      <div><%= message %></div>
-    <% end %>
-  </div>
-  <div>
-    <%= form.label :description %><br>
-    <%= form.text_area :description %>
-    <% @project.errors.full_messages_for(:description).each do |message| %>
-      <div><%= message %></div>
-    <% end %>
-  </div>
-  <div>
-    <%= form.label :start_date %><br>
-    <%= form.date_field :start_date %>  <!-- Date input for start date -->
-    <%= @project.errors.full_messages_for(:start_date).each do |message| %>
-      <div><%= message %></div>
-    <% end %>
-  </div>
-  <div>
-    <%= form.label :end_date %><br>
-    <%= form.date_field :end_date %>    <!-- Date input for end date -->
-    <%= @project.errors.full_messages_for(:end_date).each do |message| %>
-      <div><%= message %></div>
-    <% end %>
-  </div>
-  <div>
-    <%= form.label :qas, "Select QAs" %>
-    <%= form.collection_select :qa_ids, @qas, :id, :email, {}, { multiple: true } %>
-  </div>
-  <div>
-    <%= form.submit %>
-  </div>
-<% end %>
+      .form-container {
+        margin: 20px auto;
+        padding: 20px;
+        border: 2px solid #333;
+        background-color: #fff;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 800px;
+      }
+
+      h2 {
+        margin-top: 0;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .form-group input[type="text"],
+      .form-group input[type="date"],
+      .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-sizing: border-box;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+      }
+
+      .form-group .error {
+        color: #d9534f;
+        font-size: 0.9em;
+        margin-top: 5px;
+      }
+
+      .form-group .error div {
+        margin-bottom: 5px;
+      }
+
+      .form-group .form-group {
+        margin: 0;
+      }
+
+      .form-group input[type="submit"] {
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+      }
+
+      .form-group input[type="submit"]:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <%= form_with model: @project do |form| %>
+        <% if @project.errors.any? %>
+          <div id="error_explanation">
+            <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
+            <ul>
+              <% @project.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="form-group">
+          <%= form.label :title %>
+          <%= form.text_field :title %>
+          <% @project.errors.full_messages_for(:title).each do |message| %>
+            <div class="error"><%= message %></div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :description %>
+          <%= form.text_area :description %>
+          <% @project.errors.full_messages_for(:description).each do |message| %>
+            <div class="error"><%= message %></div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :start_date %>
+          <%= form.date_field :start_date %>
+          <% @project.errors.full_messages_for(:start_date).each do |message| %>
+            <div class="error"><%= message %></div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :end_date %>
+          <%= form.date_field :end_date %>
+          <% @project.errors.full_messages_for(:end_date).each do |message| %>
+            <div class="error"><%= message %></div>
+          <% end %>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :qas, "Select QAs" %>
+          <%= form.collection_select :qa_ids, @qas, :id, :email, {}, { multiple: true } %>
+        </div>
+
+        <div class="form-group">
+          <%= form.submit 'Save Project' %>
+        </div>
+      <% end %>
+    </div>
+  </body>
+</html>
