@@ -2,19 +2,29 @@ class BugsController < ApplicationController
   load_and_authorize_resource
   before_action :set_project, only: %i[new create edit update destroy]
   def index
-    if can?(:manage, Bug) && can?(:read, Project)
-      @pagy, @projects = pagy(current_user.projects)
+    if can?(:manage, Bug) && can?(:read, Project) # QA role
+      @projects = current_user.projects
+      @pagy, @projects = pagy(@projects)
       render "projects/index"
 
-    elsif can?(:read, Bug) && can?(:update, Bug)
+    elsif can?(:read, Bug) && can?(:update, Bug) # Developer role
       @pagy, @bugs = pagy(Bug.where(assigned_to: current_user))
+      @bugs = @bugs.where("title LIKE ?", "%#{params[:query]}%") if params[:query].present?
+
+      respond_to do |format|
+        format.html { render :index } # Full page render
+        format.json do
+          render json: @bugs.map { |bug| { title: bug.title, url: project_bug_path(bug.project, bug) } }
+        end
+      end
     end
   end
+
 
   def show
     @bug
   end
-  def new 
+  def new
     @bug = @project.bugs.new
     @developers = User.where(role: :developer)   # fetch only developer while creating project
   end

@@ -3,10 +3,25 @@ class ProjectsController < ApplicationController
 
   def index
     if can?(:manage, Project)
-      @pagy, @projects = pagy(current_user.managed_projects)
-    elsif can?(:manage, Bug) && can?(:read, Project)
+      @projects = current_user.managed_projects             # accessbile built in cancan
+      if params[:query].present?                                     # If user has entered text in search box then  projects will be filtered using sql LIKE
+        @projects = @projects.where("title LIKE ?", "%#{params[:query]}%")
+      else
+        @projects = current_user.managed_projects                # otherwise all projects related to manager are displayed
+      end
+
+      @pagy, @projects = pagy(@projects)                # After filtering the pagy gem is applied for pagination
+
+      respond_to do |format|
+        format.html # For normal page load
+      format.json do
+        render json: { projects: @projects.map { |project| { title: project.title, url: project_path(project) } } }   # used to display live search results in dropdown when JS fetch request is made
+        # <%# this will map all the projects to create names and urls for creating links using JavaScript..  %>
+      end
+      end
+    elsif can?(:manage, Bug) && can?(:read, Project)     # if current_user.qa?
       redirect_to bugs_path
-    elsif can?(:read, Bug) && can?(:update, Bug)
+    elsif can?(:read, Bug) && can?(:update, Bug)        # if current_user.developer?
       redirect_to bugs_path
     end
   end

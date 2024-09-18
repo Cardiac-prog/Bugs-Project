@@ -16,6 +16,8 @@
         border: 1px solid black;
         padding: 10px;
         text-align: left;
+        overflow: visible;
+        word-wrap: break-word;
       }
 
       th {
@@ -30,9 +32,43 @@
         border-radius: 10px;
         width: 90%;
         max-width: 800px;
+        overflow-x: auto;
       }
 
-      /* Style for Pagy navigation */
+      .button {
+        display: inline-block;
+        padding: 8px 12px;
+        border: 1px solid #333;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #333;
+        background-color: #f2f2f2;
+        font-size: 14px;
+        text-align: center;
+        cursor: pointer;
+        font-family: Arial, sans-serif;
+      }
+
+      .button:hover {
+        background-color: #ddd;
+      }
+
+      .edit-button {
+        background-color: #d9edf7;
+        border-color: #bce8f1;
+        color: #31708f;
+      }
+
+      .delete-button {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+      }
+
+      .delete-button:hover {
+        background-color: #f5c6cb;
+      }
+
       .pagy-nav {
         display: flex;
         justify-content: center;
@@ -72,9 +108,81 @@
         font-size: 14px;
         font-family: Arial, sans-serif;
       }
+
+      /* Style the search input */
+      .search-container {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 10px 0; /* Add some space around the search bar */
+      }
+
+      #bug-search-input {
+        width: 100%;
+        padding: 8px 12px;
+        font-size: 16px;
+        border: 2px solid #333; /* Match the table border color */
+        border-radius: 5px;
+        background-color: #f2f2f2; /* Match the button and table background */
+        color: #333; /* Match the button text color */
+        font-family: Arial, sans-serif;
+      }
+
+      #bug-search-input::placeholder {
+        color: #666;
+      }
+
+      /* Style the dropdown list */
+      #bugs-list {
+        display: none;
+        position: absolute;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #333;
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        z-index: 1000;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      #bugs-list li {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        font-size: 16px;
+        color: #333;
+        cursor: pointer;
+      }
+
+      #bugs-list li:last-child {
+        border-bottom: none;
+      }
+
+      #bugs-list li:hover {
+        background-color: #ddd;
+      }
+
+      #bugs-list li a {
+        text-decoration: none;
+        color: inherit;
+      }
     </style>
   </head>
   <body>
+    
+    <% if cannot?(:destroy, Bug) %>
+    <h2>Hello <%= current_user.email %>...</h2>
+      <div class="search-container">
+        <form id="bug-search-form" action="<%= bugs_path %>" method="get">
+          <input type="text" id="bug-search-input" name="query" placeholder="Search Bugs...">
+        </form>
+        <!-- Dropdown list -->
+        <ul id="bugs-list" class="dropdown"></ul>
+      </div>
+    <% end %>
     <div class="table-container">
       <% if can?(:manage, Bug) && can?(:read, Project) %>
         <h2>Reported Bugs</h2>
@@ -91,6 +199,9 @@
             <th>Reported By</th>
             <th>Assigned To</th>
             <th>Edit</th>
+            <% if can?(:manage, Bug) && can?(:read, Project) %>
+              <th>Delete</th>
+            <% end %>
           </tr>
         </thead>
         <tbody>
@@ -102,7 +213,10 @@
               <td><%= bug.priority.humanize %></td>
               <td><%= bug.reported_by.email %></td>
               <td><%= bug.assigned_to.email if bug.assigned_to %></td>
-              <td><%= link_to 'Edit', edit_project_bug_path(bug.project, bug) %></td>
+              <td><%= link_to 'Edit', edit_project_bug_path(bug.project, bug), class: 'button edit-button' %></td>
+              <% if can?(:manage, Bug) && can?(:read, Project) %>
+                <td><%= button_to 'Delete', project_bug_path(bug.project, bug), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: 'button delete-button' %></td>
+              <% end %>
             </tr>
           <% end %>
         </tbody>
